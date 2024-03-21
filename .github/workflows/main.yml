@@ -28,21 +28,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Set Env
-        run: |
-          echo "IMAGE_TAG_PREFIX=${{ github.ref_name }}"|sed 's|main|latest|' >> $GITHUB_ENV
-          echo "IMAGE_TAG=$(git rev-list --count HEAD)" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
 
+      - name: Set Env
+        run: |
+          echo "IMAGE_TAG_PREFIX=${{ github.ref_name }}"|sed 's|main|latest|' >> $GITHUB_ENV
+          echo "IMAGE_TAG=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+
       - name: Setup Pythons
         uses: actions/setup-python@v5
         with:
-          node-version: '3.8'
+          python-version: '3.8'
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
