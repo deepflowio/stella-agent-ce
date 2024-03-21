@@ -1,0 +1,28 @@
+# df-llm-agent Config
+kind: ConfigMap
+apiVersion: v1
+metadata:
+    name: df-llm-agent
+    namespace: deepflow
+data:
+    df-llm-agent.yaml: |-
+        daemon: True
+        api_timeout: 500
+        sql_show: False
+        log_file: /var/log/df-llm-agent.log
+        log_level: info
+        instance_path: /root/df-llm-agent
+
+        redis:
+            host:
+                - redis
+            cluster_enabled: False # True,False
+            port: 6379
+            db: 6
+            password: "password123"
+        mysql:
+            user_name: root
+            user_password: password123
+            host: mysql
+            port: 30130
+            database: deepflow_llm
