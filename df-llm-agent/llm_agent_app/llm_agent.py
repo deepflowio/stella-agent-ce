@@ -77,7 +77,7 @@ log = logger.getLogger(__name__)
 # lixiang需要的配置文件
 # {
 #     "api_key": "gz3jgMiC38gn9MiC38gn9", # X-CHJ-GWToken
-#     "api_base":"http://csd-api.chj.cloud", 
+#     "api_base":"http://csd-api.chj.cloud",
 #     "api_version":"1.0",
 #     "engine_name":"gpt35-turbo",# gpt35-turbo-16k，gpt4，gpt4-32k，gpt4-turbo
 # }
