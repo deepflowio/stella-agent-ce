@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>POST Request with JSON Parameter</title>
+  </head>
+
+  <body>
+    <div id="stream-container"></div>
+
+    <script>
+      const streamContainer = document.getElementById("stream-container");
+
+      // 构建要发送的 JSON 数据
+      const jsonData = {
+        system_content: "你是一个网络专家",
+        user_content: "网络安全如何设计",
+      };
+
+      fetch("http://127.0.0.1:30831/v1/ai/stream/azure?engine=web-gpt4-turbo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jsonData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          // 返回一个 ReadableStream 对象
+          return response.body;
+        })
+        .then((stream) => {
+          const reader = stream.getReader();
+          const textDecoder = new TextDecoder("utf-8"); // 指定字符编码为UTF-8
+
+          function readChunk() {
+            reader
+              .read()
+              .then(({done, value}) => {
+                if (done) {
+                  // 流结束
+                  console.log("Stream ended");
+                  return;
+                }
+                const text = textDecoder.decode(value);
+                // 处理流数据，例如将其附加到页面上
+                const para = document.createElement("p");
+                para.textContent = text;
+
+                // dashscope 不需要追加，直接覆盖！！！
+                streamContainer.appendChild(para);
+
+                // 继续读取下一个块
+                readChunk();
+              })
+              .catch((error) => {
+                console.error("Error reading stream:", error);
+              });
+          }
+
+          // 开始读取流
+          readChunk();
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    </script>
+  </body>
+</html>
