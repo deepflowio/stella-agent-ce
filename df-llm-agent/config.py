@@ -39,6 +39,12 @@ class Config(object):
             self.mysql_port = mysql.get('port', 20130)
             self.mysql_database = mysql.get('database', 'deepflow_llm')
 
+            ai = yml.get('ai', {})
+            if ai:
+                enable = ai.get('enable', False)
+                if enable:
+                    self.platforms = ai.get('platforms', [])
+
         except Exception as e:
             traceback.print_exc()
             print("配置文件解析错误: %s" % e)

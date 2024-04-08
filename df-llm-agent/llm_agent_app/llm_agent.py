@@ -19,7 +19,7 @@ import datetime
 
 from utils.curl_tools import curl_tools
 from utils.tools import generate_uuid
-
+from config import config
 from chat_record_app.chat_record import chat_record_worker
 
 from langchain_openai import AzureChatOpenAI
@@ -209,26 +209,46 @@ class llmAgentWorker(object):
         data_info = {}
         # data_info["user_id"] = user_id
         data_info["platform"] = platform
-        try:
-            res_config = await db_models.LlmConfig.filter(**data_info).all()
-        except Exception as e:
-            raise BadRequestException("SQL_ERROR", const.SQL_ERROR, f"{e}")
 
         engine_config = {}
-        # key = engine_name 时可能会存在多个配置,设置为当前使用值
-        for v in res_config:
-            v_dict = dict(v)
-            _key = v_dict["key"]
-            _value = v_dict["value"]
 
-            if _key == "engine_name":
-                if _value == engine_name:
+        if hasattr(config, "platforms"):
+            res_config = config.platforms
+            for _info in res_config:
+                if _info.get('platform', '') == platform and _info.get('enable', False):
+                    _engine_name = _info.get('engine_name', [])
+                    if engine_name in _engine_name:
+                        _info['engine_name'] = f"{engine_name}"
+                    else:
+                        _info['engine_name'] = ''
+
+                    engine_config = _info
+
+            if not engine_config.get("enable", False):
+                raise BadRequestException("INVALID_PARAMETERS", f"{const.INVALID_PARAMETERS}, 平台: {platform} 未启用")
+
+        else:
+            try:
+                res_config = await db_models.LlmConfig.filter(**data_info).all()
+            except Exception as e:
+                raise BadRequestException("SQL_ERROR", const.SQL_ERROR, f"{e}")
+
+            # key = engine_name 时可能会存在多个配置,设置为当前使用值
+            for v in res_config:
+                v_dict = dict(v)
+                _key = v_dict["key"]
+                _value = v_dict["value"]
+
+                if _key == "engine_name":
+                    if _value == engine_name:
+                        engine_config[_key] = _value
+                else:
                     engine_config[_key] = _value
-            else:
-                engine_config[_key] = _value
 
-        if engine_config.get("enable", "") != "1":
-            raise BadRequestException("INVALID_PARAMETERS", f"{const.INVALID_PARAMETERS}, 引用的引擎未开启: {engine_name}")
+            if engine_config.get("enable", "") != "1":
+                raise BadRequestException("INVALID_PARAMETERS", f"{const.INVALID_PARAMETERS}, 平台: {platform} 未启用")
+
+        # print(engine_config, engine_config.get("engine_name"), engine_name)
 
         if engine_config.get("engine_name", "") != engine_name:
             raise BadRequestException("INVALID_PARAMETERS", f"{const.INVALID_PARAMETERS}, 引用的引擎错误: {engine_name}")

@@ -18,3 +18,40 @@ mysql:
     host: mysql
     port: 30130
     database: deepflow_llm
+ai:
+    enable: False # True,False
+    platforms:
+        -
+            enable: False
+            platform: "azure"
+            model: "gpt"
+            api_type: "azure"
+            api_key: ""
+            api_base: ""
+            api_version: ""
+            engine_name: 
+                - ""
+        -
+            enable: False
+            platform: "aliyun"
+            model: "dashscope"
+            api_key: ""
+            engine_name: 
+                - "qwen-turbo"
+                - "qwen-plus"
+        -
+            enable: False
+            platform: "baidu"
+            model: "qianfan"
+            api_key: ""
+            api_secre: ""
+            engine_name: 
+                - "ERNIE-Bot"
+                - "ERNIE-Bot-turbo"
+        -
+            enable: False
+            platform: "zhipu"
+            model: "zhipuai"
+            api_key: ""
+            engine_name: 
+                - "chatglm_turbo"
