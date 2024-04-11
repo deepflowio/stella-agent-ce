@@ -4,6 +4,8 @@ import json
 from database import db_models
 from utils import logger
 
+from config import config
+
 log = logger.getLogger(__name__)
 
 
@@ -65,6 +67,24 @@ class llmAgentConfigWorker(object):
 
         if platform:
             data_info["platform"] = platform
+
+        if hasattr(config, "platforms"):
+            res_config = config.platforms
+            res = {}
+            for _info in res_config:
+                __info = {}
+                _platform = _info.get('platform', '')
+
+                if platform and platform != _platform:
+                    continue
+                _enable = _info.get('enable', False)
+                __info['enable'] = "1" if _enable else "0"
+                __info['model'] = _info.get('model', '')
+                __info['engine_name'] = _info.get('engine_name', [])
+
+                res[f"{_platform}"] = __info
+
+            return res
 
         try:
             if data_info:
