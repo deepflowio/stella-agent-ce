@@ -45,7 +45,7 @@ log = logger.getLogger(__name__)
 # 注释部分只是说明格式，参数值没有任何意义
 # azure需要的配置项
 # {
-#     "api_key": "906cc0fa3398455dbf5454edbf5454e",
+#     "api_key": "api_key_xxx",
 #     "api_type": "azure",
 #     "api_base":"https://df.openai.azure.com/",
 #     "api_version":"2023-07-01-preview",
@@ -55,33 +55,24 @@ log = logger.getLogger(__name__)
 
 # dashscope需要的配置文件
 # {
-#     "api_key": "sk-55153949da514909b93a0f909b93a0f",
+#     "api_key": "api_key_xxx",
 #     "engine_name": "qwen-turbo",
 #     "engine_name": "qwen-plus",
 # }
 
 # qianfan需要的配置文件
 # {
-#     "api_key": "gz3jgMiC38gn9xm8O9xm8O",
-#     "api_secre":"gVKiffSxDjjGQUFz7lWtPjGQUFz7lWtP"
+#     "api_key": "api_key_xxx",
+#     "api_secre":"api_key_secre"
 #     "engine_name": "ERNIE-Bot",
 #     "engine_name": "ERNIE-Bot-turbo",
 # }
 
 # zhipu需要的配置文件
 # {
-#     "api_key": "gz3jgMiC38gn9xm8O9xm8OWe",
+#     "api_key": "api_key_xxx",
 #     "engine_name": "chatglm_turbo",
 # }
-
-# lixiang需要的配置文件
-# {
-#     "api_key": "gz3jgMiC38gn9MiC38gn9", # X-CHJ-GWToken
-#     "api_base":"http://csd-api.chj.cloud",
-#     "api_version":"1.0",
-#     "engine_name":"gpt35-turbo",# gpt35-turbo-16k，gpt4，gpt4-32k，gpt4-turbo
-# }
-
 
 # 对接外部agent
 
