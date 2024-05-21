@@ -93,10 +93,3 @@ INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'b
 INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'zhipu','zhipuai','enable',0);
 INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'zhipu','zhipuai','api_key','');
 INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'zhipu','zhipuai','engine_name','chatglm_turbo');
-
-
-INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'lixiang','gpt','enable',0);
-INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'lixiang','gpt','api_key','');
-INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'lixiang','gpt','api_type','azure');
-INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'lixiang','gpt','api_base','');
-INSERT INTO llm_config (`user_id`,`platform`,`model`,`key`,`value`) VALUES (1,'lixiang','gpt','api_version','');
