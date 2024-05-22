@@ -1,0 +1,41 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: df-llm-agent-deployment
+  namespace: deepflow
+  labels:
+    component: df-llm-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: df-llm-agent
+  template:
+    metadata:
+      labels:
+        component: df-llm-agent
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: df-llm-agent
+          image: "hub.deepflow.yunshan.net/dev/df-llm-agent:latest"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: debug-path
+              mountPath: /root/debug
+            - mountPath: /etc/web/df-llm-agent.yaml
+              name: web-volumes-df-llm-agent
+              subPath: df-llm-agent.yaml
+      volumes:
+        - name: debug-path
+          hostPath:
+            type: DirectoryOrCreate
+            path: /usr/local/deepflow/debug/
+        - name: web-volumes-df-llm-agent
+          configMap:
+            name: df-llm-agent
+            items:
+              - key: df-llm-agent.yaml
+                path: df-llm-agent.yaml
