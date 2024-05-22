@@ -1,0 +1,128 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches:
+      - main
+      - dev
+      - 'v**'
+      - 'feature-**'
+      - latest
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Why trigger?"
+        required: true
+        type: string
+
+env:
+  IMAGE: "deepflowio-stella-agent-ce"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set Env
+        run: |
+          echo "IMAGE_TAG_PREFIX=${{ github.ref_name }}"|sed 's|main|latest|' >> $GITHUB_ENV
+          echo "IMAGE_TAG=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+
+      - name: Setup Pythons
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          install: true
+
+      - name: Log In To GitHub Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: "ghcr.io"
+          username: "${{ github.repository_owner }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Log In To Docker Registry
+        uses: docker/login-action@v2
+        with:
+          username: "deepflowce"
+          password: "${{ secrets.REGISTRY_PASS }}"
+
+      - name: Build And Push deepflowio-stella-agent-ce Images
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: Dockerfile
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            "ghcr.io/${{ github.repository_owner }}/deepflow-ce/${{ env.IMAGE }}:${{ env.IMAGE_TAG_PREFIX }}-${{ env.IMAGE_TAG }}"
+            "ghcr.io/${{ github.repository_owner }}/deepflow-ce/${{ env.IMAGE }}:${{ env.IMAGE_TAG_PREFIX }}"
+            "deepflowce/${{ env.IMAGE }}:${{ env.IMAGE_TAG_PREFIX }}"
+
+      - name: Log In To ALIYUN HongKong Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: "registry.cn-hongkong.aliyuncs.com"
+          username: "${{ secrets.REGISTRY_ALIYUN_USER }}"
+          password: "${{ secrets.REGISTRY_PASS }}"
+
+      - name: Build And Push deepflowio-stella-agent-ce Images to ALIYUN HongKong
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: Dockerfile
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            "registry.cn-hongkong.aliyuncs.com/deepflow-ce/${{ env.IMAGE }}:${{ env.IMAGE_TAG_PREFIX }}-${{ env.IMAGE_TAG }}"
+            "registry.cn-hongkong.aliyuncs.com/deepflow-ce/${{ env.IMAGE }}:${{ env.IMAGE_TAG_PREFIX }}"
+
+      - name: Log In To ALIYUN Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: "registry.cn-beijing.aliyuncs.com"
+          username: "${{ secrets.REGISTRY_ALIYUN_USER }}"
+          password: "${{ secrets.REGISTRY_PASS }}"
+
+      - name: Build And Push deepflowio-stella-agent-ce Images To ALIYUN BeiJing
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: Dockerfile
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            "registry.cn-beijing.aliyuncs.com/deepflow-ce/${{ env.IMAGE }}:${{ env.IMAGE_TAG_PREFIX }}-${{ env.IMAGE_TAG }}"
+            "registry.cn-beijing.aliyuncs.com/deepflow-ce/${{ env.IMAGE }}:${{ env.IMAGE_TAG_PREFIX }}"
+
+      - name: Build tar.gz
+        run: |
+          mkdir -p release/stella-agent-ce
+          mv deploy df-llm-agent etc Dockerfile requirements3.txt stream.html -t release/stella-agent-ce
+          cd release
+          tar -zcvf deepflow-gui-grafana.tar.gz  ./stella-agent-ce/*
+          rm -r ./stella-agent-ce
+       
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./release/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
