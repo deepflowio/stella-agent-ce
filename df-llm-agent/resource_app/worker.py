@@ -12,31 +12,24 @@ log = logger.getLogger(__name__)
 
 class app_worker(object):
 
-    args = data = user_info = None
-
     def __init__(self, request):
-        app_worker.request = request
-        app_worker.args = request.args
-        if app_worker.args:
+        self.request = request
+        self.args = request.args
+        if self.args:
             for k, v in self.args.items():
-                app_worker.args[k] = [i for i in v]
-        # app_worker.files = request.files
-        # app_worker.data = request.json
-        app_worker.user_info = request.ctx.user
+                self.args[k] = [i for i in v]
+        self.user_info = request.ctx.user
 
-    @classmethod
-    async def img_add(cls):
+    async def img_add(self):
         # 校验todoing
-        files = cls.request.files
-        return await resource_worker.img_add(cls.user_info, cls.args, files)
+        files = self.request.files
+        return await resource_worker.img_add(self.user_info, self.args, files)
 
-    @classmethod
-    async def img_add_b64(cls):
+    async def img_add_b64(self):
         # 校验todoing
-        data = cls.request.json
-        return await resource_worker.img_add_b64(cls.user_info, cls.args, data)
+        data = self.request.json
+        return await resource_worker.img_add_b64(self.user_info, self.args, data)
 
-    @classmethod
-    async def img_get(cls, hash_name=""):
+    async def img_get(self, hash_name=""):
         # 校验todoing
-        return await resource_worker.img_get(cls.user_info, cls.args, hash_name)
+        return await resource_worker.img_get(self.user_info, self.args, hash_name)
