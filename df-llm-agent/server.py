@@ -34,7 +34,7 @@ log = logger.getLogger(__name__)
 @app.middleware("request")
 async def run_before_handler(request):
     req_headers = dict(request.headers)
-    req_path = request.path
+    # req_path = request.path
 
     if request.method.lower() == 'options':
         headers = {
