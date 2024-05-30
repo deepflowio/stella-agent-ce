@@ -61,7 +61,7 @@ log = logger.getLogger(__name__)
 # qianfan需要的配置文件
 # {
 #     "api_key": "api_key_xxx",
-#     "api_secre":"api_key_secre"
+#     "api_secret":"api_key_secret"
 #     "engine_name": "ERNIE-Bot",
 #     "engine_name": "ERNIE-Bot-turbo",
 # }
@@ -332,7 +332,7 @@ class llmAgentWorker(object):
             self.engine_name = engine_config.get("engine_name")
 
         elif platform == "baidu":
-            for key in ("api_key", "api_secre", "engine_name"):
+            for key in ("api_key", "api_secret", "engine_name"):
                 if key not in engine_config or engine_config.get(f"{key}", "") == "":
                     raise BadRequestException(
                         "DATA_NOT_FOUND",
@@ -340,7 +340,7 @@ class llmAgentWorker(object):
                     )
 
             qianfan.AK(engine_config.get("api_key"))
-            qianfan.SK(engine_config.get("api_secre"))
+            qianfan.SK(engine_config.get("api_secret"))
             self.engine_name = engine_config.get("engine_name")
 
         elif platform == "zhipu":
@@ -749,117 +749,6 @@ class llmAgentWorker(object):
                 await self.chat_up()
 
             return generate_data(output, output_all)
-
-    # 组件
-    async def module(self, user_info, platform, engine_name, args, data):
-        # 校验
-        await self.assistant_base(user_info, platform, engine_name, "langchain", args, data
-                                  )
-
-        # 开始时间
-        working_start_time = datetime.datetime.now()
-
-        # azure模型
-        llm = self.langchain_azure_client
-
-        # 字符串返回
-        output_parser = StrOutputParser()
-
-        # 基础模板：问题分类指令模板
-        prompt = PromptTemplate.from_template(
-            """鉴于下面的用户问题，将其分类为“LangChain”、“LLM”或“其他”。不要用超过一个字来回应.
-
-        <问题>
-        {question}
-        </问题>
-
-        分类:"""
-        )
-
-        chain = prompt | llm | output_parser
-
-        # res = chain.invoke({"question": "如何使用llm?"})
-        # res = chain.invoke({"question": "如何使用langchain?"})
-        # print(res)
-
-        # 子链
-        # langchain专家
-        langchain_chain = (
-            PromptTemplate.from_template(
-                """您是 langchain 方面的专家。 \
-        回答问题时始终以“正如官方文档中所诉”开头。 \
-        回答以下问题:
-
-        问题: {question}
-        回答:"""
-            )
-            | llm
-            | output_parser
-        )
-
-        # 大模型专家
-        llm_chain = (
-            PromptTemplate.from_template(
-                """您是 llm大模型 方面的专家。 \
-        回答问题时始终以“以我所知道的所有模型”开头。 \
-        回答以下问题:
-
-        问题: {question}
-        回答:"""
-            )
-            | llm
-            | output_parser
-        )
-
-        # 默认链
-        general_chain = (
-            PromptTemplate.from_template(
-                """回答以下问题:
-
-        问题: {question}
-        回答:"""
-            )
-            | llm
-            | output_parser
-        )
-
-        branch = RunnableBranch(
-            # 多个子链依次追加
-            (lambda x: "llm" in x["topic"].lower(), llm_chain),
-            (lambda x: "langchain" in x["topic"].lower(), langchain_chain),
-            # 默认链
-            general_chain,
-        )
-
-        full_chain = {"topic": chain, "question": lambda x: x["question"]} | branch
-
-        # 问题
-        question = self.query[0]["content"]
-
-        try:
-            # 异步一次性返回
-            res = await full_chain.ainvoke({"question": question})
-
-            # 结束时间
-            working_end_time = datetime.datetime.now()
-            all_time = working_end_time.timestamp() - working_start_time.timestamp()
-            msg = {}
-            msg["user_id"] = self.user_info.get("ID", 0)
-            msg["start_time"] = f"{working_start_time}"
-            msg["end_time"] = f"{working_end_time}"
-            msg["all_time"] = all_time
-            msg["return"] = res
-            # 记录并返回
-            self.output.append(f"{res}")
-            self.output_all.append(msg)
-
-            return res
-        except Exception as e:
-            self.output_all.append(e)
-            raise BadRequestException("APP_ERROR", const.APP_ERROR, f"{e}")
-        finally:
-            # 更新会话记录，包括所有返回可记录数据
-            await self.chat_up()
 
 
 llm_agent_worker = llmAgentWorker()

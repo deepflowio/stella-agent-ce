@@ -9,7 +9,6 @@ from data import init_db, close_db
 from chat_record_app.app import chat_record_app
 from llm_agent_app.app import llm_agent_app
 from health_app.app import health_app
-from resource_app.app import resource_app
 import traceback
 from utils import logger
 
@@ -22,7 +21,6 @@ app.config.RESPONSE_TIMEOUT = 500
 app.blueprint(health_app)
 app.blueprint(llm_agent_app)
 app.blueprint(chat_record_app)
-app.blueprint(resource_app)
 
 CORS(app)
 

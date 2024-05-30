@@ -2,7 +2,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-    name: df-llm-agent
+    name: df-llm-agent-ce
     namespace: deepflow
 data:
     df-llm-agent.yaml: |-
@@ -12,14 +12,6 @@ data:
         log_file: /var/log/df-llm-agent.log
         log_level: info
         instance_path: /root/df-llm-agent
-
-        redis:
-            host:
-                - redis
-            cluster_enabled: False # True,False
-            port: 6379
-            db: 6
-            password: "password123"
         mysql:
             user_name: root
             user_password: password123
@@ -27,11 +19,11 @@ data:
             port: 30130
             database: deepflow_llm
         ai:
-            enable: False # True,False
+            enable: False
             platforms:
                 -
-                    enable: False
                     platform: "azure"
+                    enable: False
                     model: "gpt"
                     api_type: "azure"
                     api_key: ""
@@ -40,25 +32,25 @@ data:
                     engine_name: 
                         - ""
                 -
-                    enable: False
                     platform: "aliyun"
+                    enable: False
                     model: "dashscope"
                     api_key: ""
                     engine_name: 
                         - "qwen-turbo"
                         - "qwen-plus"
                 -
-                    enable: False
                     platform: "baidu"
+                    enable: False
                     model: "qianfan"
                     api_key: ""
-                    api_secre: ""
+                    api_secret: ""
                     engine_name: 
                         - "ERNIE-Bot"
                         - "ERNIE-Bot-turbo"
                 -
-                    enable: False
                     platform: "zhipu"
+                    enable: False
                     model: "zhipuai"
                     api_key: ""
                     engine_name: 
