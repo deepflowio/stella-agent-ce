@@ -10,36 +10,12 @@ llm_agent_app = Blueprint("llm_agent", url_prefix=API_PREFIX)
 # 配置必须属于一个用户
 
 
-@llm_agent_app.route("/llm_agent_config", methods=["POST"])
-@wrap_resp
-async def llm_agent_config_add(request):
-    worker = app_worker(request)
-    res = await worker.llm_agent_config_add()
-    return res
-
-
 @llm_agent_app.route("/llm_agent_config/<platform:str>", name="by_platform")
 @llm_agent_app.route("/llm_agent_config")
 @wrap_resp
 async def llm_agent_config_list(request, platform=""):
     worker = app_worker(request)
     res = await worker.llm_agent_config_list(platform)
-    return res
-
-
-@llm_agent_app.route("/llm_agent_config/<platform:str>/<key_name:str>", methods=["PATCH"])
-@wrap_resp
-async def llm_agent_config_update(request, platform="", key_name=""):
-    worker = app_worker(request)
-    res = await worker.llm_agent_config_update(platform, key_name)
-    return res
-
-
-@llm_agent_app.route("/llm_agent_config/<platform:str>/<engine_name:str>", methods=["DELETE"])
-@wrap_resp
-async def llm_agent_config_delete(request, platform="", engine_name=""):
-    worker = app_worker(request)
-    res = await worker.llm_agent_config_delete(platform, engine_name)
     return res
 
 
@@ -50,14 +26,4 @@ async def llm_agent_stream_system(request, platform=""):
     worker = app_worker(request)
     # 流数据
     res = await worker.llm_agent_stream(platform)
-    return res
-
-# 组件
-
-
-@llm_agent_app.route("/ai/azure/deepflow/modules", methods=["POST"])
-@wrap_resp
-async def llm_agent_module(request):
-    worker = app_worker(request)
-    res = await worker.llm_agent_module(platform='azure')
     return res

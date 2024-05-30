@@ -2,40 +2,40 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: df-llm-agent-deployment
+  name: df-llm-agent-deployment-ce
   namespace: deepflow
   labels:
-    component: df-llm-agent
+    component: df-llm-agent-ce
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: df-llm-agent
+      component: df-llm-agent-ce
   template:
     metadata:
       labels:
-        component: df-llm-agent
+        component: df-llm-agent-ce
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
-        - name: df-llm-agent
-          image: "hub.deepflow.yunshan.net/dev/df-llm-agent:latest"
+        - name: df-llm-agent-ce
+          image: "ghcr.io/deepflowio/deepflow-ce/deepflowio-stella-agent-ce:latest"
           imagePullPolicy: Always
           volumeMounts:
             - name: debug-path
               mountPath: /root/debug
             - mountPath: /etc/web/df-llm-agent.yaml
-              name: web-volumes-df-llm-agent
+              name: web-volumes-df-llm-agent-ce
               subPath: df-llm-agent.yaml
       volumes:
         - name: debug-path
           hostPath:
             type: DirectoryOrCreate
             path: /usr/local/deepflow/debug/
-        - name: web-volumes-df-llm-agent
+        - name: web-volumes-df-llm-agent-ce
           configMap:
-            name: df-llm-agent
+            name: df-llm-agent-ce
             items:
               - key: df-llm-agent.yaml
                 path: df-llm-agent.yaml

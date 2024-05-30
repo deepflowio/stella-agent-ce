@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: df-llm-agent
+  name: df-llm-agent-ce
   namespace: deepflow
 spec:
   ports:
@@ -13,5 +13,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    component: df-llm-agent
+    component: df-llm-agent-ce
   type: NodePort
