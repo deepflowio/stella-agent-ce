@@ -36,10 +36,19 @@ class llmAgentConfigWorker(object):
 
                 if platform and platform != _platform:
                     continue
+
                 _enable = _info.get('enable', False)
+
                 __info['enable'] = "1" if _enable else "0"
+
                 __info['model'] = _info.get('model', '')
-                __info['engine_name'] = _info.get('engine_name', [])
+
+                engine_name = _info.get('engine_name', [])
+
+                if not isinstance(engine_name, list):
+                    raise BadRequestException("INVALID_PARAMETERS", f"{const.INVALID_PARAMETERS}, 配置项 engine_name 的值格式错误，engine_name：{engine_name}")
+
+                __info['engine_name'] = engine_name
 
                 res[f"{_platform}"] = __info
 
