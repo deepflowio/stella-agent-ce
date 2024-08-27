@@ -11,7 +11,7 @@ data:
         sql_show: False
         log_file: /var/log/df-llm-agent.log
         log_level: info
-        instance_path: /root/df-llm-agent
+        instance_path: /df-llm-agent
         mysql:
             user_name: root
             user_password: password123
