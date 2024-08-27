@@ -49,7 +49,8 @@ RUN useradd -u 1000 -m deepflow -s /bin/bash
 
 RUN chmod +x /df-llm-agent/py2c.sh  && \
     chown -R deepflow:deepflow /df-llm-agent && \
-    chown -R deepflow:deepflow /venv
+    chown -R deepflow:deepflow /venv && \
+    chown -R deepflow:deepflow /var/log
 
 RUN /df-llm-agent/py2c.sh
 
