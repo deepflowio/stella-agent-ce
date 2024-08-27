@@ -58,6 +58,8 @@ RUN ls -la /df-llm-agent
 ## dockerfile里的db_version 和issu里最大版本的x.x.x.x.sql 一致
 ENV DB_VERSION=1.0.0.0
 
+USER deepflow 
+
 ## Run
 CMD /venv/bin/python3 -u /df-llm-agent/app.py
 
