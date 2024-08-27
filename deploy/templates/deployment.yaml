@@ -24,7 +24,7 @@ spec:
           imagePullPolicy: Always
           volumeMounts:
             - name: debug-path
-              mountPath: /root/debug
+              mountPath: /debug
             - mountPath: /etc/web/df-llm-agent.yaml
               name: web-volumes-df-llm-agent-ce
               subPath: df-llm-agent.yaml
